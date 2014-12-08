@@ -18,12 +18,7 @@ Install dependencies
 Usage
 =====
 
-.   /redis_role_swap.rb -c cluster.yml
-
-Maunal operations
-=================
-
-Do arping virtual ip: arping -U -c 4 -I bond0 #{FLOATING_IP}
+./redis_role_swap.rb -c cluster.yml
 
 References
 ==========
