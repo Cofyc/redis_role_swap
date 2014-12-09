@@ -1,15 +1,15 @@
-floating_ip: 10.1.1.1
+floating_ip: 192.168.50.100
 floating_ip_cidr: /24
-interface: eth0
+interface: eth1
 ssh_user: root # defaults: root
 ssh_identify_file: NULL # defaults: do not use
 
 instance_one:
-    host: 192.168.1.1
+    host: 192.168.50.31
     port: 6379
-    auth: password_example
+    auth: abcdefg
 
 instance_two:
-    host: 192.168.1.2
+    host: 192.168.50.32
     port: 6379
-    auth: password_example
+    auth: abcdefg

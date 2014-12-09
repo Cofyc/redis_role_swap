@@ -100,7 +100,7 @@ class MyRedis < Redis
         if $?.exitstatus == 0
            "master"
         else
-            "slave"
+           "slave"
         end
     end
 
@@ -109,7 +109,12 @@ class MyRedis < Redis
     end
 
     def hostname
-        `host #{@options['host']}`.split(" ").last.gsub(/.\Z/, "").split(".").first
+        h = `host #{@options['host']}`.split(" ").last.gsub(/.\Z/, "").split(".").first
+        if $?.exitstatus == 0
+	    h
+        else
+            @options['host']
+        end
     end
 
     def read_only?
@@ -297,29 +302,28 @@ class RedisRoleSwapContext
 
     def verify_before_shutdown_master
         puts "Verifying before shutdown old master..."
-        # 1. Check master is receving queires or not....
+        # 1. Check master is receving queires or not.... (should be improved)
         # We need to use a separate client to monitor, cuz we cannot call other
         # commands in monitor status
-        monitor_client = MyRedis.new(@master.options)
-        while true
-            begin
-                Timeout.timeout(3) do
-                    monitor_client.monitor() do |on|
-                        if on == "OK"
-                            next
-                        end
-                        puts on
-                        break
-                    end
-                end
-            rescue Timeout::Error
-                puts "Master is no longer receiving queries in 3 secs now...OK"
-                break
-            end
-            puts "Master is receiving queries now... sleep 1 sec, then check again."
-            sleep 1
-        end
-        monitor_client.quit()
+        #monitor_client = MyRedis.new(@master.options)
+        #while true
+            #begin
+                #Timeout.timeout(3) do
+                    #monitor_client.monitor() do |on|
+                        #if on == "OK"
+                            #next
+                        #end
+                        #break
+                    #end
+                #end
+            #rescue Timeout::Error
+                #puts "Master is no longer receiving queries in 3 secs now...OK"
+                #break
+            #end
+            #puts "Master is receiving queries now... sleep 1 sec, then check again."
+            #sleep 1
+        #end
+        #monitor_client.quit()
         # 2. monitor the master is no longer receiving any query
         while true
             lagtime = replication_lag(@slave, @master)
